@@ -36,6 +36,18 @@ def analyze_image():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/give_intent", methods=["POST"])
+def get_intent():
+    data = request.get_json()
+    if not data or "text" not in data:
+        return jsonify({"error": "Missing 'text' in request body"}), 400
+
+    try:
+        result = text_analyzer.generate_intent(data["text"])
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(port=5000)
