@@ -16,7 +16,7 @@ class TextAnalyzer:
         """
         Extracts keywords from a product description using phi-2.
         """
-        prompt = f"Extract keywords from the following text:\n{description}"
+        prompt = f"Extract keywords from: {description}"
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
 
         outputs = self.model.generate(
@@ -30,18 +30,13 @@ class TextAnalyzer:
         return {"keywords": result}
 
     def generate_intent(self, text: str) -> dict:
-        """
-        Generates the intent of the description in a complete sentence.
-        """
-        prompt = f"What is the intent of this description? Answer in one sentence:\n{text}"
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
+      prompt =  f"Extract keywords and intent from: {text}"
 
-        outputs = self.model.generate(
-            **inputs,
-            max_new_tokens=60,
-            do_sample=False,
-            eos_token_id=self.tokenizer.eos_token_id
-        )
+      inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
+      outputs = self.model.generate(**inputs,  max_new_tokens=50, do_sample=False, eos_token_id=self.tokenizer.eos_token_id)
 
-        result = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return {"intent": result}
+      # print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+      result = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+      return {"intent": result}
+      
